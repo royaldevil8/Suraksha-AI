@@ -89,3 +89,22 @@ def test_unknown_resource_type_does_not_change_inventory():
         "medical_kit": 20,
         "shelter_space": 100,
     }
+def test_conflicting_incident_gets_no_automatic_resources():
+    incidents = [
+        {
+            **make_incident(
+                "INC-CONFLICT",
+                95,
+                urgency=5,
+                resources_needed=["ambulance"],
+            ),
+            "conflict_flag": True,
+        }
+    ]
+
+    result, remaining = allocate_resources(incidents)
+
+    assert result[0]["assigned_resources"] == []
+    assert next(
+        r for r in remaining if r["type"] == "ambulance"
+    )["available"] == 3

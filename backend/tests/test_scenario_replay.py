@@ -48,3 +48,38 @@ def test_replay_produces_risk_and_priority():
     assert incident["priority"] in {"CRITICAL", "HIGH", "MEDIUM", "LOW"}
     assert isinstance(incident["assigned_resources"], list)
     assert isinstance(incident["explanation"], list)
+
+
+from app.services.orchestrator import (
+    build_snapshot,
+    invalidate_snapshot_cache,
+)
+
+
+def test_replay_does_not_change_dashboard_snapshot():
+    invalidate_snapshot_cache()
+    dashboard_before = build_snapshot()
+    original_ids = {
+        item["report_id"] for item in dashboard_before["incidents"]
+    }
+    original_count = dashboard_before["report_count"]
+
+    response = client.post(
+        "/api/scenario/replay",
+        json={
+            "text": "Test flood with 20 people trapped",
+            "source": "cache_isolation_test",
+            "location_name": "Test Location",
+        },
+    )
+
+    assert response.status_code == 200
+
+    dashboard_after = build_snapshot()
+    after_ids = {
+        item["report_id"] for item in dashboard_after["incidents"]
+    }
+
+    assert dashboard_after["report_count"] == original_count
+    assert after_ids == original_ids
+

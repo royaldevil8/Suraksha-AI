@@ -1,7 +1,7 @@
 ﻿from datetime import datetime, timezone
 from uuid import uuid4
 
-from app.services.orchestrator import build_snapshot, invalidate_snapshot_cache
+from app.services.orchestrator import build_snapshot
 
 
 def replay_report(text: str, source: str, location_name: str) -> dict:
@@ -16,6 +16,5 @@ def replay_report(text: str, source: str, location_name: str) -> dict:
     }
 
     snapshot = build_snapshot([report])
-    invalidate_snapshot_cache()
 
     return {"injected_report": report, **snapshot}
