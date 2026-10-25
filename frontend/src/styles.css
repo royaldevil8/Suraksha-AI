@@ -143,3 +143,144 @@ summary:focus-visible {
     overflow-wrap: anywhere;
   }
 }
+
+/* SURAKSHA AI — Resource Inventory */
+.inventory-panel {
+  min-width: 0;
+  overflow: hidden;
+  margin-bottom: 18px;
+  padding-bottom: 18px;
+}
+
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  padding: 0 20px;
+}
+
+.resource-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  min-width: 0;
+  padding: 15px;
+  background: #091721;
+  border: 1px solid #203443;
+  border-radius: 10px;
+}
+
+.resource-card-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  color: #9fb4c2;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.resource-card-head > span:first-child {
+  overflow-wrap: anywhere;
+}
+
+.stock-ok,
+.stock-empty {
+  display: inline-block;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.stock-ok {
+  color: #b5f36d;
+}
+
+.stock-empty {
+  color: #ff9a9a;
+}
+
+.resource-numbers {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+}
+
+.resource-numbers strong {
+  display: block;
+  color: #e9f0f6;
+  font-size: 28px;
+  line-height: 1.25;
+}
+
+.resource-numbers span {
+  color: #8fa4b4;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.stock-track {
+  width: 100%;
+  height: 6px;
+  overflow: hidden;
+  background: #20313f;
+  border-radius: 999px;
+}
+
+.stock-fill {
+  height: 100%;
+  background: #b5f36d;
+  border-radius: inherit;
+  transition: width 180ms ease;
+}
+
+.stock-fill.empty {
+  background: #ff7777;
+}
+
+.stock-foot {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  min-width: 0;
+  color: #8fa4b4;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.inventory-note {
+  margin: 16px 20px 0;
+  line-height: 1.7;
+}
+
+.inventory-empty {
+  padding: 20px;
+}
+
+@media (max-width: 1100px) {
+  .resource-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .resource-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+    padding: 0 12px;
+  }
+
+  .resource-card {
+    padding: 12px;
+  }
+
+  .inventory-note {
+    margin-left: 12px;
+    margin-right: 12px;
+  }
+}
