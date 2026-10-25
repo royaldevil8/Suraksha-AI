@@ -354,11 +354,12 @@ export default function App() {
 
       setIncidents(nextIncidents);
 
-      setSummary((previous) => ({
-        ...(previous ?? {}),
-        report_count: snapshot.report_count,
-        ...getMetrics(nextIncidents),
-      }));
+      setSummary(
+        snapshot.summary ?? {
+          report_count: snapshot.report_count,
+          ...getMetrics(nextIncidents),
+       }
+      );
 
       // Scenario replay returns a separate synthetic snapshot.
       // Refresh resource availability from the regular resource endpoint.

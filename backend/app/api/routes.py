@@ -1,5 +1,6 @@
 
 from fastapi import APIRouter
+
 from app.core.config import RESOURCE_INVENTORY
 from app.schemas.incident import ReplayRequest
 from app.services.orchestrator import build_snapshot
@@ -8,14 +9,8 @@ from app.services.scenario import replay_report
 router = APIRouter()
 
 
-@router.get("/health")
-def health():
-    return {"status": "ok", "service": "suraksha-ai"}
-
-
-@router.get("/summary")
-def summary():
-    snapshot = build_snapshot()
+def build_summary(snapshot: dict) -> dict:
+    """Calculate dashboard metrics from one consistent snapshot."""
     items = snapshot["incidents"]
 
     return {
@@ -28,10 +23,10 @@ def summary():
             i["priority"] == "HIGH" for i in items
         ),
         "duplicate_count": sum(
-            bool(i["duplicate_of"]) for i in items
+            bool(i.get("duplicate_of")) for i in items
         ),
         "conflict_count": sum(
-            bool(i["conflict_flag"]) for i in items
+            bool(i.get("conflict_flag")) for i in items
         ),
         "unverified_count": sum(
             i.get("evidence_status", "unverified") == "unverified"
@@ -43,6 +38,16 @@ def summary():
     }
 
 
+@router.get("/health")
+def health():
+    return {"status": "ok", "service": "suraksha-ai"}
+
+
+@router.get("/summary")
+def summary():
+    return build_summary(build_snapshot())
+
+
 @router.get("/incidents")
 def incidents():
     return build_snapshot()["incidents"]
@@ -51,6 +56,7 @@ def incidents():
 @router.get("/resources")
 def resources():
     snapshot = build_snapshot()
+
     return {
         "inventory": RESOURCE_INVENTORY,
         "remaining": snapshot["remaining_resources"],
@@ -59,6 +65,13 @@ def resources():
 
 @router.post("/scenario/replay")
 def scenario_replay(payload: ReplayRequest):
-    return replay_report(
-        payload.text, payload.source, payload.location_name
+    snapshot = replay_report(
+        payload.text,
+        payload.source,
+        payload.location_name,
     )
+
+    return {
+        **snapshot,
+        "summary": build_summary(snapshot),
+    }
